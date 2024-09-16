@@ -16,10 +16,10 @@ namespace IMSAPI.Controllers
         }
 
         [HttpGet("obtenerempresas")]
-        public async Task<IActionResult> CrearEmpresa(int ownerId)
+        public async Task<IActionResult> ObtenerEmpresa(int ownerId)
         {
             if(ownerId == null) {
-                return BadRequest("Campos faltantes");
+                return BadRequest("Campos faltantes.");
             }
             
             List<Company> companies = new List<Company>();
