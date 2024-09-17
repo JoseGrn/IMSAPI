@@ -24,7 +24,7 @@ namespace IMSAPI.Controllers
                 return BadRequest("Campos faltantes");
             }
 
-            List<Owner> ownerlist = new List<Owner>();
+            Owner owner = null;
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -40,15 +40,15 @@ namespace IMSAPI.Controllers
                         {
                             while (await reader.ReadAsync())
                             {
-                                ownerlist.Add(new Owner
+                                owner = new Owner
                                 {
                                     OwnerId = reader.GetInt32(0),
                                     FirstName = reader.GetString(1),
                                     LastName = reader.GetString(2),
-                                });
+                                };
                             }
                         }
-                        return Ok(ownerlist);
+                        return Ok(owner);
                     }
                     catch (SqlException ex)
                     {

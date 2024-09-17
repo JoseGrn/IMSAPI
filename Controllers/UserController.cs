@@ -59,16 +59,16 @@ namespace IMSAPI.Controllers
         }
 
         [HttpGet("loginuser")]
-        public async Task<IActionResult> LoginUser(string username, string password){
-            if(username == null || password == null){
+        public async Task<IActionResult> LoginUser(string user, string password){
+            if(user == null || password == null){
                 return BadRequest("Campos faltantes");
             }
 
-            UserGet user = null;
+            UserGet userInfo = null;
             
             using (SqlConnection connection = new SqlConnection(_connectionString)){
                 string query = "select UserId, Name, Role, ProductsIdList from [User] where Username = 'rusername' AND Password = HASHBYTES('SHA2_256', 'rpassword');";
-                query = query.Replace("rusername",username);
+                query = query.Replace("rusername",user);
                 query = query.Replace("rpassword",password);
                 using(SqlCommand command = new SqlCommand(query,connection)) {
                     try
@@ -77,7 +77,7 @@ namespace IMSAPI.Controllers
                         using (SqlDataReader reader = await command.ExecuteReaderAsync()){
                             while (await reader.ReadAsync())
                             {
-                                user = new UserGet{
+                                userInfo = new UserGet{
                                     UserId = reader.GetInt32(0),
                                     Name = reader.GetString(1),
                                     Role = reader.GetByte(2),
@@ -86,11 +86,11 @@ namespace IMSAPI.Controllers
                             }
                         }
 
-                        if(user == null){
+                        if(userInfo == null){
                             return NotFound("Credenciales incorrectas.");
                         }
 
-                        return Ok(user);
+                        return Ok(userInfo);
                     }
                     catch(SqlException ex)
                     {
