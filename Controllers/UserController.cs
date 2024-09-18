@@ -166,12 +166,44 @@ namespace IMSAPI.Controllers
                     {
                         await connection.OpenAsync();
                         await command.ExecuteNonQueryAsync();
-                        return Ok("Usuario guardada correctamente");
                     }
                     catch (SqlException ex)
                     {
                         // Handle exception
                         return StatusCode(500, $"Internal server error: {ex.Message}");
+                    }
+                }
+            }
+
+            List<UserClass> users = new List<UserClass>();
+
+            using (SqlConnection connection = new SqlConnection(_connectionString)){
+                string query = "select UserId, Username, Name, Role, ProductsIdList, ExpirationDate from [User] where CompanyId = rcompanyid";
+                query = query.Replace("rcompanyid",user.CompanyId.ToString());
+                using(SqlCommand command = new SqlCommand(query,connection)) {
+                    try
+                    {
+                        await connection.OpenAsync();
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync()){
+                            while (await reader.ReadAsync())
+                            {
+                                users.Add(new UserClass
+                                {
+                                    UserId = reader.GetInt32(0),
+                                    CompanyId = user.CompanyId,
+                                    Username = reader.GetString(1),
+                                    Name = reader.GetString(2),
+                                    Role = reader.GetByte(3),
+                                    ProductsIdList = reader.GetString(4),
+                                    ExpirationDate = reader.GetDateTime(5)
+                                });
+                            }
+                        }
+                        return Ok(users);
+                    }
+                    catch(SqlException ex)
+                    {
+                         return StatusCode(500, $"Internal server error: {ex.Message}");
                     }
                 }
             }
