@@ -24,7 +24,7 @@ namespace IMSAPI.Controllers
             List<GetProduct> listaProductos = new List<GetProduct>();
             
             using (SqlConnection connection = new SqlConnection(_connectionString)){
-                string query = "select Name, Description, MinQuantity, Quantity, Specie, Price from Product where ProductId IN (rproductos) AND CompanyId = rcompanyid";
+                string query = "select ProductId, Name, Description, MinQuantity, Quantity, Specie, Price from Product where ProductId IN (rproductos) AND CompanyId = 3";
                 query = query.Replace("rproductos", productos);
                 query = query.Replace("rcompanyid", companyId.ToString());
                 using(SqlCommand command = new SqlCommand(query,connection)) {
@@ -36,12 +36,13 @@ namespace IMSAPI.Controllers
                             {
                                 listaProductos.Add(new GetProduct
                                 {
-                                    Name = reader.GetString(0),
-                                    Description = reader.GetString(1),
-                                    MinQuantity = reader.GetInt32(2),
-                                    Quantity = reader.GetInt32(3),
-                                    Specie = reader.GetString(4),
-                                    Price = reader.GetDecimal(5)
+                                    ProductId = reader.GetInt32(0),
+                                    Name = reader.GetString(1),
+                                    Description = reader.GetString(2),
+                                    MinQuantity = reader.GetInt32(3),
+                                    Quantity = reader.GetInt32(4),
+                                    Specie = reader.GetString(5),
+                                    Price = reader.GetDecimal(6)
                                 });
                             }
                         }
@@ -89,6 +90,73 @@ namespace IMSAPI.Controllers
                     {
                         // Handle exception
                         return StatusCode(500, $"Internal server error: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        [HttpPost("modificarcantidad")]
+        public async Task<IActionResult> ModificarCantidad(int cantidad, int productId, int companyId, string listaProductos){
+
+            if(cantidad == null || productId == 0 || companyId == 0){
+                return BadRequest("Campos faltantes");
+            }
+
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = "UPDATE Product SET Quantity = rquantity WHERE ProductId = rproductid";
+                query = query.Replace("rquantity", cantidad.ToString());
+                query = query.Replace("rproductid", productId.ToString());
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    try
+                    {
+                        await connection.OpenAsync();
+                        await command.ExecuteNonQueryAsync();
+                    }
+                    catch (SqlException ex)
+                    {
+                        // Handle exception
+                        return StatusCode(500, $"Internal server error: {ex.Message}");
+                    }
+                }
+            }
+
+            List<GetProduct> listaProductosNuevos = new List<GetProduct>();
+
+            using (SqlConnection connection = new SqlConnection(_connectionString)){
+                string query = "select ProductId, Name, Description, MinQuantity, Quantity, Specie, Price from Product where ProductId IN (rproductos) AND CompanyId = rcompanyid";
+                query = query.Replace("rproductos", listaProductos);
+                query = query.Replace("rcompanyid", companyId.ToString());
+                using(SqlCommand command = new SqlCommand(query,connection)) {
+                    try
+                    {
+                        await connection.OpenAsync();
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync()){
+                            while (await reader.ReadAsync())
+                            {
+                                listaProductosNuevos.Add(new GetProduct
+                                {
+                                    ProductId = reader.GetInt32(0),
+                                    Name = reader.GetString(1),
+                                    Description = reader.GetString(2),
+                                    MinQuantity = reader.GetInt32(3),
+                                    Quantity = reader.GetInt32(4),
+                                    Specie = reader.GetString(5),
+                                    Price = reader.GetDecimal(6)
+                                });
+                            }
+                        }
+
+                        if(listaProductosNuevos.Count == 0){
+                            return BadRequest("No se encontraron productos");
+                        }
+
+                        return Ok(listaProductosNuevos);
+                    }
+                    catch(SqlException ex)
+                    {
+                         return StatusCode(500, $"Internal server error: {ex.Message}");
                     }
                 }
             }

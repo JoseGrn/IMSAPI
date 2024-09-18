@@ -28,7 +28,7 @@ namespace IMSAPI.Controllers
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = "SELECT OwnerId, FirstName, LastName FROM Owner where Username = 'ruser' AND Password = 'rpassword';";
+                string query = "SELECT OwnerId, Username, FirstName, LastName FROM Owner where Username = 'ruser' AND Password =  HASHBYTES('SHA2_256', 'rpassword');";
                 query = query.Replace("ruser", user);
                 query = query.Replace("rpassword", password);
                 using (SqlCommand command = new SqlCommand(query, connection))
@@ -43,11 +43,17 @@ namespace IMSAPI.Controllers
                                 owner = new Owner
                                 {
                                     OwnerId = reader.GetInt32(0),
-                                    FirstName = reader.GetString(1),
-                                    LastName = reader.GetString(2),
+                                    username = reader.GetString(1),
+                                    FirstName = reader.GetString(2),
+                                    LastName = reader.GetString(3),
                                 };
                             }
                         }
+
+                        if(owner == null){
+                            return BadRequest("Inicio de sesion fallido.");
+                        }
+
                         return Ok(owner);
                     }
                     catch (SqlException ex)
@@ -62,32 +68,86 @@ namespace IMSAPI.Controllers
         [HttpPost("editowner")]
         public async Task<IActionResult> EditOwner(OwnerEdition owner)
         {
+            if(owner == null){
+                return BadRequest("Campos faltantes");
+            }
+            
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                if(owner == null){
-                    return BadRequest("Campos faltantes");
-                }
-                
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                string query = "UPDATE Owner SET FirstName = 'rfname', LastName = 'rlname', Username = 'ruser' WHERE OwnerId = rid;";
+                query = query.Replace("rfname", owner.FirstName);
+                query = query.Replace("rlname", owner.LastName);
+                query = query.Replace("ruser", owner.Username);
+                query = query.Replace("rid", owner.OwnerId.ToString());
+                using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    string query = "UPDATE Owner SET FirstName = 'rfname', LastName = 'rlname', Username = 'ruser', Password = 'rpassword' WHERE OwnerId = rid;";
-                    query = query.Replace("rfname", owner.FirstName);
-                    query = query.Replace("rlname", owner.LastName);
-                    query = query.Replace("ruser", owner.Username);
-                    query = query.Replace("rpassword", owner.Password);
-                    query = query.Replace("rid", owner.OwnerId.ToString());
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    try
                     {
-                        try
+                        await connection.OpenAsync();
+                        await command.ExecuteNonQueryAsync();
+                    }
+                    catch (SqlException ex)
+                    {
+                        // Handle exception
+                        return StatusCode(500, $"Internal server error: {ex.Message}");
+                    }
+                }
+            }
+
+            Owner newowner = null;
+
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT OwnerId, Username, FirstName, LastName FROM Owner where OwnerId = rownerid;";
+                query = query.Replace("rownerid", owner.OwnerId.ToString());
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    try
+                    {
+                        await connection.OpenAsync();
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync())
                         {
-                            await connection.OpenAsync();
-                            await command.ExecuteNonQueryAsync();
-                            return Ok("Usuario editado correctamente");
+                            while (await reader.ReadAsync())
+                            {
+                                newowner = new Owner
+                                {
+                                    OwnerId = reader.GetInt32(0),
+                                    username = reader.GetString(1),
+                                    FirstName = reader.GetString(2),
+                                    LastName = reader.GetString(3),
+                                };
+                            }
                         }
-                        catch (SqlException ex)
-                        {
-                            // Handle exception
-                            return StatusCode(500, $"Internal server error: {ex.Message}");
-                        }
+                        return Ok(owner);
+                    }
+                    catch (SqlException ex)
+                    {
+                        // Handle exception
+                        return StatusCode(500, $"Internal server error: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        [HttpPost("changepassword")]
+        public async Task<IActionResult> ChangePassword(string password, int ownerId){
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = "UPDATE Owner SET Password = HASHBYTES('SHA2_256', 'rpassword') WHERE OwnerId = rowner;";
+                query = query.Replace("rpassword", password);
+                query = query.Replace("rowner", ownerId.ToString());
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    try
+                    {
+                        await connection.OpenAsync();
+                        await command.ExecuteNonQueryAsync();
+                        return Ok("Contraseña actualizada correctamente.");
+                    }
+                    catch (SqlException ex)
+                    {
+                        // Handle exception
+                        return StatusCode(500, $"Internal server error: {ex.Message}");
                     }
                 }
             }

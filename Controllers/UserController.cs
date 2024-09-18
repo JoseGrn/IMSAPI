@@ -24,7 +24,7 @@ namespace IMSAPI.Controllers
             UserGet user = null;
             
             using (SqlConnection connection = new SqlConnection(_connectionString)){
-                string query = "select Username, Password, Name, Role, ProductsIdList from [User] where UserId = ruserid";
+                string query = "select Username, Name, Role, ProductsIdList from [User] where UserId = ruserid";
                 query = query.Replace("ruserid",userId.ToString());
                 using(SqlCommand command = new SqlCommand(query,connection)) {
                     try
@@ -36,10 +36,9 @@ namespace IMSAPI.Controllers
                                 user = new UserGet{
                                     UserId = userId,
                                     Username = reader.GetString(0),
-                                    Password = reader.GetString(1),
-                                    Name = reader.GetString(2),
-                                    Role = reader.GetByte(3),
-                                    ProductsIdList = reader.GetString(4)
+                                    Name = reader.GetString(1),
+                                    Role = reader.GetByte(2),
+                                    ProductsIdList = reader.GetString(3)
                                 };
                             }
                         }
@@ -67,7 +66,7 @@ namespace IMSAPI.Controllers
             UserGet userInfo = null;
             
             using (SqlConnection connection = new SqlConnection(_connectionString)){
-                string query = "select UserId, Name, Role, ProductsIdList from [User] where Username = 'rusername' AND Password = HASHBYTES('SHA2_256', 'rpassword');";
+                string query = "select UserId, CompanyId, Username, Name, Role, ProductsIdList from [User] where Username = 'rusername' AND Password = HASHBYTES('SHA2_256', 'rpassword');";
                 query = query.Replace("rusername",user);
                 query = query.Replace("rpassword",password);
                 using(SqlCommand command = new SqlCommand(query,connection)) {
@@ -79,9 +78,11 @@ namespace IMSAPI.Controllers
                             {
                                 userInfo = new UserGet{
                                     UserId = reader.GetInt32(0),
-                                    Name = reader.GetString(1),
-                                    Role = reader.GetByte(2),
-                                    ProductsIdList = reader.GetString(3)
+                                    CompanyId = reader.GetInt32(1),
+                                    Username = reader.GetString(2),
+                                    Name = reader.GetString(3),
+                                    Role = reader.GetByte(4),
+                                    ProductsIdList = reader.GetString(5)
                                 };
                             }
                         }

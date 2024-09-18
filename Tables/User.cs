@@ -24,8 +24,8 @@ public class UserCreation
 public class UserGet
 {
     public int UserId { get; set; }
+    public int CompanyId { get; set; } 
     public string Username { get; set; } 
-    public string Password { get; set; } 
     public string Name { get; set; } 
     public byte? Role { get; set; } 
     public string ProductsIdList { get; set; }

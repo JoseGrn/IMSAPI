@@ -1,5 +1,6 @@
 public class GetProduct
 {
+    public int ProductId { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public int MinQuantity { get; set; }
