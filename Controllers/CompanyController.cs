@@ -15,6 +15,48 @@ namespace IMSAPI.Controllers
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
+        [HttpGet("obtenerempresasbyid")]
+        public async Task<IActionResult> ObtenerEmpresaById(int companyId){
+            if(companyId == 0) {
+                return BadRequest("Campos faltantes.");
+            }
+            
+            Company company = null;
+            
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = "select OwnerId, Name, Description, CreationDate from Company where CompanyId = rcompanyid";
+                query = query.Replace("rcompanyid", companyId.ToString());
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    try
+                    {
+                        await connection.OpenAsync();
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                company = new Company
+                                {
+                                    CompanyId = companyId,
+                                    OwnerId = reader.GetInt32(0),
+                                    Name = reader.GetString(1),
+                                    Description = reader.IsDBNull(2) ? null : reader.GetString(2),
+                                    Date = reader.GetDateTime(3)
+                                };
+                            }
+                        }
+                        return Ok(company);
+                    }
+                    catch (SqlException ex)
+                    {
+                        // Handle exception
+                        return StatusCode(500, $"Internal server error: {ex.Message}");
+                    }
+                }
+            }
+        }
+
         [HttpGet("obtenerempresas")]
         public async Task<IActionResult> ObtenerEmpresa(int ownerId)
         {
@@ -186,8 +228,8 @@ namespace IMSAPI.Controllers
             }
         }
 
-        [HttpPost("borrarempresa")]
-        public async Task<IActionResult> BorrarEmpresa(int companyId){
+        [HttpDelete("borrarempresa")]
+        public async Task<IActionResult> BorrarEmpresa(int companyId, int ownerId){
             if(companyId == null) {
                 return BadRequest("Campos faltantes");
             }
@@ -202,7 +244,41 @@ namespace IMSAPI.Controllers
                     {
                         await connection.OpenAsync();
                         await command.ExecuteNonQueryAsync();
-                        return Ok("Empresa eliminada correctamente");
+                    }
+                    catch (SqlException ex)
+                    {
+                        // Handle exception
+                        return StatusCode(500, $"Internal server error: {ex.Message}");
+                    }
+                }
+            }
+
+            List<Company> companies = new List<Company>();
+
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT CompanyId, Name, Description, CreationDate FROM Company WHERE OwnerId = rownerid AND IsActive = 1;";
+                query = query.Replace("rownerid", ownerId.ToString());
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    try
+                    {
+                        await connection.OpenAsync();
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                companies.Add(new Company
+                                {
+                                    CompanyId = reader.GetInt32(0),
+                                    OwnerId = ownerId,
+                                    Name = reader.GetString(1),
+                                    Description = reader.IsDBNull(2) ? null : reader.GetString(2),
+                                    Date = reader.GetDateTime(3)
+                                });
+                            }
+                        }
+                        return Ok(companies);
                     }
                     catch (SqlException ex)
                     {
