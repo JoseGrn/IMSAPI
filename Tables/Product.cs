@@ -31,3 +31,8 @@ public class EditProduct
     public string Specie { get; set; }
     public decimal Price { get; set; }
 }
+
+public class ProductNames{
+    public int ProductId { get; set; }
+    public string Name { get; set; }
+}

@@ -14,6 +14,42 @@ namespace IMSAPI.Controllers
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
+        [HttpGet("obtenerproductosnombres")]
+        public async Task<IActionResult> ObtenerProductosNombres(int companyId){
+            if(companyId == 0){
+                return BadRequest("Campos faltantes.");
+            }
+
+            List<ProductNames> listaProductos = new List<ProductNames>();
+
+            using (SqlConnection connection = new SqlConnection(_connectionString)){
+                string query = "select ProductId, Name from Product where CompanyId = rcompanyid AND IsActive = 1";
+                query = query.Replace("rcompanyid", companyId.ToString());
+                using(SqlCommand command = new SqlCommand(query,connection)) {
+                    try
+                    {
+                        await connection.OpenAsync();
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync()){
+                            while (await reader.ReadAsync())
+                            {
+                                listaProductos.Add(new ProductNames
+                                {
+                                    ProductId = reader.GetInt32(0),
+                                    Name = reader.GetString(1)
+                                });
+                            }
+                        }
+
+                        return Ok(listaProductos);
+                    }
+                    catch(SqlException ex)
+                    {
+                         return StatusCode(500, $"Internal server error: {ex.Message}");
+                    }
+                }
+            }
+        }
+
         [HttpGet("obtenerproductosgeneral")]
         public async Task<IActionResult> ObtenerProductosGeneral(int companyId){
             if(companyId == 0){

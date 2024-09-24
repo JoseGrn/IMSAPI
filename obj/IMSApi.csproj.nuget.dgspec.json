@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\IMSApi.csproj": {}
+    "c:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\IMSApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\IMSApi.csproj": {
+    "c:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\IMSApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\IMSApi.csproj",
+        "projectUniqueName": "c:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\IMSApi.csproj",
         "projectName": "IMSApi",
-        "projectPath": "C:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\IMSApi.csproj",
+        "projectPath": "c:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\IMSApi.csproj",
         "packagesPath": "C:\\Users\\josed\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\obj\\",
+        "outputPath": "c:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\josed\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "A6qUm/YQ0qyDXQ7UmfBDejZmX0YxIaVIkWpACQosTwiRvqsYLXQpsc9o7YRWXJQs9MjUFWs5Y/jkWo0TGKlmWQ==",
+  "dgSpecHash": "2M1q+2pdXYVCXnzUZf5GciM8Pi+TgjP95lQy55o79LUVDDio5wHMNPDYx7ue1+kJrL82NsZHuNFP24DXplQCCg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\IMSApi.csproj",
+  "projectFilePath": "c:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\IMSApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\josed\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\josed\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
