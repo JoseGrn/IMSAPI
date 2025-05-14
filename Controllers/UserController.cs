@@ -1,6 +1,7 @@
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IMSAPI.Controllers
 {
@@ -101,11 +102,64 @@ namespace IMSAPI.Controllers
             }
         }
 
+        [HttpGet("getclientes")]
+        public async Task<IActionResult> GetClientesUser(int companyId){
+
+            if(companyId == 0){
+                return BadRequest("Campos faltantes.");
+            }
+
+            List<GetClientes> clientes = new List<GetClientes>();
+
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT UserId, Name FROM [User] WHERE CompanyId = rcompanyid AND Role = 3 AND IsActive = 1";
+                query = query.Replace("rcompanyid", companyId.ToString());
+                using(SqlCommand command = new SqlCommand(query,connection)) {
+                    try
+                    {
+                        await connection.OpenAsync();
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync()){
+                            while (await reader.ReadAsync())
+                            {
+                                clientes.Add(new GetClientes{
+                                    UserId = reader.GetInt32(0),
+                                    Name = reader.GetString(1)
+                                });
+                            }
+                        }
+                        return Ok(clientes);
+                    }
+                    catch(SqlException ex)
+                    {
+                         return StatusCode(500, $"Internal server error: {ex.Message}");
+                    }
+                }
+            }
+        }
+
         [HttpPost("editarusuario")]
         public async Task<IActionResult> EditarProducto(UserClass user){
 
             if(user.UserId == 0){
                 return BadRequest("Campos faltantes");
+            }
+
+            if(!user.ProductsIdList.IsNullOrEmpty()){
+                if(user.ProductsIdList[0] == ','){
+                    string nuevostring = user.ProductsIdList.Substring(1);
+                    UserClass userClass = new UserClass{
+                        CompanyId = user.CompanyId,
+                        ExpirationDate = user.ExpirationDate,
+                        Name = user.Name,
+                        Password = user.Password,
+                        ProductsIdList = nuevostring,
+                        Role = user.Role,
+                        UserId = user.UserId,
+                        Username = user.Username
+                    };
+                    user = userClass;
+                }
             }
 
             if(user.Password == ""){

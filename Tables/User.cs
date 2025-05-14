@@ -40,3 +40,8 @@ public class EditUser{
     public string ProductsIdList { get; set; } 
     public DateTime? ExpirationDate { get; set; } 
 }
+
+public class GetClientes{
+    public int UserId { get; set; }
+    public string Name { get; set; }
+}
