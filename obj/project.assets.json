@@ -2141,21 +2141,19 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\IMSApi.csproj",
+      "projectUniqueName": "C:\\Users\\josed\\Documents\\proyectos-personales\\IMS\\IMSAPI\\IMSApi.csproj",
       "projectName": "IMSApi",
-      "projectPath": "C:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\IMSApi.csproj",
+      "projectPath": "C:\\Users\\josed\\Documents\\proyectos-personales\\IMS\\IMSAPI\\IMSApi.csproj",
       "packagesPath": "C:\\Users\\josed\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\josed\\OneDrive\\Documentos\\proyectos-personales\\IMS\\IMSAPI\\obj\\",
+      "outputPath": "C:\\Users\\josed\\Documents\\proyectos-personales\\IMS\\IMSAPI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\josed\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\josed\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -2168,6 +2166,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -2206,7 +2209,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.409/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

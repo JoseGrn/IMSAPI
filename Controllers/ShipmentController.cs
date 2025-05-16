@@ -188,6 +188,28 @@ namespace IMSAPI.Controllers
                 }
             }
 
+            foreach(var val in shipmentCreate.Products){
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    string query = "UPDATE [Product] SET Quantity = Quantity - @Quantityrep where ProductId = @productidrep";
+                    query = query.Replace("@Quantityrep", val.Quantity.ToString());
+                    query = query.Replace("@productidrep", val.ProductId.ToString());
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        try
+                        {
+                            await connection.OpenAsync();
+                            await command.ExecuteNonQueryAsync();
+                        }
+                        catch (SqlException ex)
+                        {
+                            // Handle exception
+                            return StatusCode(500, $"Internal server error: {ex.Message}");
+                        }
+                    }
+                }
+            }
+
             return Ok(new { status = "success", message = "Orden de compra creada correctamente" });
         }
 
